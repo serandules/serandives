@@ -9,14 +9,10 @@ var cors = require('cors');
 var compression = require('compression');
 var format = require('string-template');
 
-var utils = require('utils');
-var serandi = require('serandi');
-var throttle = require('throttle');
 var errors = require('errors');
-
-var clients = require('./clients');
-
 var sera = require('sera');
+
+var clients = require('./utils/clients');
 
 var server;
 
@@ -73,7 +69,7 @@ var redirects = function (apps) {
   from = from.split('|');
   from.forEach(function (host) {
     apps.use(vhost(host, function (req, res) {
-      res.redirect(301, utils.resolve('www://'));
+      res.redirect(301, sera.resolve('www://'));
     }));
   });
 };
@@ -100,7 +96,7 @@ var loadClients = function (apps, domain, subdomain, done) {
       async.eachSeries(clientz, function (client, clientDone) {
         var routes;
         try {
-          routes = require(client.name);
+          routes = require('./domains/' + client.name);
         } catch (e) {
           return done(e);
         }
@@ -126,35 +122,38 @@ var loadClients = function (apps, domain, subdomain, done) {
   });
 };
 
-var loadServices = function (prefix, server, done) {
-  sera({
-    prefix: prefix,
-    server: server,
-    models: {}
-  }, done);
-};
-
 exports.stop = function (done) {
   server.close(done);
 };
 
-exports.start = function (done) {
-  var domain = utils.domain();
-  var subdomain = utils.subdomain();
-  var apps = express();
-  var services = express();
-
-  var version = 'v';
-  var prefix = '/' + version;
-
-  loadServices(prefix, services, function (err) {
+exports.prepare = function (done) {
+  sera(function (err) {
     if (err) {
       return done(err);
     }
+    sera.extend(require('./models'), done);
+  });
+};
+
+exports.start = function (done) {
+  var version = 'v';
+  var prefix = '/' + version;
+  var apps = express();
+  var services = express();
+
+  sera.serve({prefix: prefix, server: services}, function (err) {
+    if (err) {
+      return done(err);
+    }
+    var utils = sera.utils;
+    var middlewares = sera.middlewares;
+    var domain = utils.domain();
+    var subdomain = utils.subdomain();
+
     apps.disable('x-powered-by');
     apps.use(morgan(':remote-addr :method :url :status :res[content-length] - :response-time ms'));
-    apps.use(serandi.pond);
-    apps.use(throttle(sera.model('tiers')));
+    apps.use(middlewares.pond);
+    apps.use(middlewares.throttleByAPI('tiers'));
     redirects(apps);
     apps.use(cors({
       exposedHeaders: ['Content-Type', 'Link']
@@ -172,19 +171,17 @@ exports.start = function (done) {
     }
 
     if (nconf.get('SERVER_SSL')) {
-      apps.use(serandi.ssl);
+      apps.use(middlewares.ssl);
     }
+
+    var host = format(subdomain, {subdomain: 'apis'}) + '.' + domain;
+    apps.use('/' + version, vhost(host, services));
+    log.info('services:registered', 'host:%s, version:%s', host, version);
 
     loadClients(apps, domain, subdomain, function (err) {
       if (err) {
         return done(err);
       }
-
-      var host = format(subdomain, {subdomain: 'apis'}) + '.' + domain;
-
-      apps.use('/' + version, vhost(host, services));
-
-      log.info('services:registered', 'host:%s, version:%s', host, version);
       apps.use(function (err, req, res, next) {
         if (err.status) {
           return res.pond(err);

@@ -30,11 +30,17 @@ db.on('error', function (err) {
 
 db.once('open', function () {
     log.info('db:opened');
-    server.start(function (err) {
+    server.prepare(function (err) {
         if (err) {
-            log.error('server:errored', err);
+            log.error('server:prepare', err);
             return process.exit(1);
         }
+        server.start(function (err) {
+            if (err) {
+                log.error('server:start', err);
+                return process.exit(1);
+            }
+        });
     });
 });
 

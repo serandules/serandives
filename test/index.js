@@ -1,23 +1,41 @@
-var pot = require('pot');
-var sera = require('sera');
+var fs = require('fs');
+var path = require('path');
 
-var initializers = require('../initializers');
+var sera = require('sera');
+var pot = require('pot');
+
 var server = require('../index');
+
+var initScripts = fs.readdirSync(path.join(__dirname, '..', 'initializers', 'scripts'));
+
+var serandivesScripts = function () {
+  var scripts = [];
+  initScripts.forEach(function (name) {
+    scripts.push({
+      name: name,
+      initializer: require('../initializers/scripts/' + name)
+    });
+  });
+  return scripts;
+};
 
 before(function (done) {
   console.log('starting up the server');
-  sera(function (err) {
+  pot.start(function (err) {
     if (err) {
       return done(err);
     }
-    pot.start(function (initialized) {
-      initializers.init(function (err) {
+    server.prepare(function (err) {
+      if (err) {
+        return done(err);
+      }
+      sera.boot(serandivesScripts(), function (err) {
         if (err) {
-          return initialized(err);
+          return done(err);
         }
-        server.start(initialized);
+        server.start(done);
       });
-    }, done);
+    });
   });
 });
 

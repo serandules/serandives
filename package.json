@@ -21,13 +21,12 @@
     "cors": "2.8.4",
     "mongoose": "5.1.8",
     "lodash": "4.17.4",
+    "sharp": "0.23.1",
     "string-template": "1.0.0",
     "logger": "serandules/logger#master",
-    "utils": "serandules/utils#master",
     "errors": "serandules/errors#master",
     "serandi": "serandules/serandi#master",
-    "throttle": "serandules/throttle#master",
-    "models": "serandules/models#master"
+    "throttle": "serandules/throttle#master"
   },
   "devDependencies": {
     "mocha": "5.2.0",
