@@ -75,7 +75,7 @@ module.exports = function (done) {
             if (err) {
               return done(err);
             }
-            log.info('users:created');
+            log.info('users:created2');
             done();
           });
         });

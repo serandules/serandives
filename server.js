@@ -1,13 +1,10 @@
 var nconf = require('nconf').use('memory').argv().env();
 var log = require('logger')('server:server');
-var fs = require('fs');
 var mongoose = require('mongoose');
-
-var utils = require('utils');
 
 mongoose.Promise = global.Promise;
 
-var env = utils.env();
+var env = nconf.get('ENV');
 
 nconf.defaults(require('./env/' + env + '.json'));
 

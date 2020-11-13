@@ -1,4 +1,5 @@
 {
+  "PORT": "4000",
   "UNTHROTTLE": true,
   "DOMAIN": "development.serandives.com",
   "EMAIL_DOMAIN": "serandives.com",
@@ -8,10 +9,23 @@
   "FACEBOOK_TOKEN_URI": "http://development.serandives.com:4040/facebook/token",
   "FACEBOOK_PROFILE_URI": "http://localhost:4040/facebook/profile",
   "FACEBOOK_LOGIN_URI": "https://www.facebook.com/dialog/oauth",
+  "CDN_STATICS": "http://development.serandives.com:4040",
+  "CDN_IMAGES": "https://d1kdoh4oxh2joj.cloudfront.net",
   "CLIENT": "www:master",
   "CLIENT_WWW": "www:master",
   "CLIENT_ACCOUNTS": "accounts:master",
   "CLIENT_ADMIN": "admin:master",
   "CLIENT_AUTOS": "autos:master",
-  "CLIENT_REALESTATES": "realestates:master"
+  "CLIENT_REALESTATES": "realestates:master",
+  "INDEX_WWW": "master",
+  "INDEX_ACCOUNTS": "master",
+  "INDEX_ADMIN": "master",
+  "INDEX_AUTOS": "master",
+  "SQS_QUEUE_MODEL_UPDATES": "model-updates-development",
+  "S3_BUCKET_SERANDIVES_IMAGES": "serandives-images-test",
+  "MONGODB_URI": "mongodb://127.0.0.1:27017/serandives-development",
+  "REDIS_URI": "redis://127.0.0.1:6379",
+  "CONFIG_BOOT_AUTOS": "cdn:https://d1kdoh4oxh2joj.cloudfront.net/",
+  "SERVER_PORT": "4000",
+  "CAPTCHA_URI": "http://localhost:6060/captcha"
 }

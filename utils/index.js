@@ -9,6 +9,12 @@ var utils = sera.utils;
 
 var cdn = nconf.get('CDN_STATICS');
 
+var env = nconf.get('ENV');
+
+exports.env = function () {
+  return env;
+};
+
 exports.index = function (id, revision, done) {
   var url = cdn + '/' + id + '/' + revision + '/' + id + '/index.html';
   log.info('index:url', 'id:%s, url:%s', id, url);
