@@ -1,7 +1,9 @@
-var log = require('logger')('server');
-var nconf = require('nconf');
+var log = require('logger')('serandives');
+var nconf = require('nconf').use('memory').argv().env();
 var _ = require('lodash');
 var async = require('async');
+var path = require('path');
+var fs = require('fs');
 var vhost = require('vhost');
 var express = require('express');
 var morgan = require('morgan');
@@ -10,11 +12,10 @@ var compression = require('compression');
 var format = require('string-template');
 
 var errors = require('errors');
-var sera = require('sera');
 
 var clients = require('./utils/clients');
 
-var server;
+var sera = require('sera');
 
 var findClients = function () {
   var key;
@@ -122,86 +123,109 @@ var loadClients = function (apps, domain, subdomain, done) {
   });
 };
 
-exports.stop = function (done) {
-  server.close(done);
-};
-
-exports.prepare = function (done) {
+var serandives = function (done) {
   sera(function (err) {
     if (err) {
       return done(err);
     }
-    sera.extend(require('./models'), done);
-  });
-};
-
-exports.start = function (done) {
-  var version = 'v';
-  var prefix = '/' + version;
-  var apps = express();
-  var services = express();
-
-  sera.serve({prefix: prefix, server: services}, function (err) {
-    if (err) {
-      return done(err);
-    }
-    var utils = sera.utils;
-    var middlewares = sera.middlewares;
-    var domain = utils.domain();
-    var subdomain = utils.subdomain();
-
-    apps.disable('x-powered-by');
-    apps.use(morgan(':remote-addr :method :url :status :res[content-length] - :response-time ms'));
-    apps.use(middlewares.pond);
-    apps.use(middlewares.throttleByAPI('tiers'));
-    redirects(apps);
-    apps.use(cors({
-      exposedHeaders: ['Content-Type', 'Link']
-    }));
-    apps.use(compression());
-
-    apps.get('/status', function (req, res) {
-      res.json({
-        status: 'healthy'
-      });
-    });
-
-    if (nconf.get('SERVER_TRUST_PROXY')) {
-      apps.enable('trust proxy');
-    }
-
-    if (nconf.get('SERVER_SSL')) {
-      apps.use(middlewares.ssl);
-    }
-
-    var host = format(subdomain, {subdomain: 'apis'}) + '.' + domain;
-    apps.use('/' + version, vhost(host, services));
-    log.info('services:registered', 'host:%s, version:%s', host, version);
-
-    loadClients(apps, domain, subdomain, function (err) {
+    sera.extend(require('./models'), function (err) {
       if (err) {
         return done(err);
       }
-      apps.use(function (err, req, res, next) {
-        if (err.status) {
-          return res.pond(err);
-        }
-        log.error('server-error:errored', err);
-        res.pond(errors.serverError());
+      boot(serandives, done);
+    });
+  });
+};
+
+module.exports = serandives;
+
+var boot = function (serandives, done) {
+  serandives.boot = function (done) {
+    fs.readdir(path.join(__dirname, 'initializers', 'scripts'), function (err, extended) {
+      if (err) {
+        return done(err);
+      }
+      var scripts = [];
+      extended.forEach(function (name) {
+        scripts.push({
+          name: name,
+          initializer: require('./initializers/scripts/' + name)
+        });
+      });
+      sera.boot(scripts, done)
+    });
+  };
+
+  serandives.serve = function (done) {
+    var version = 'v';
+    var prefix = '/' + version;
+    var apps = express();
+    var services = express();
+
+    sera.serve({prefix: prefix, server: services}, function (err) {
+      if (err) {
+        return done(err);
+      }
+      var utils = sera.utils;
+      var middlewares = sera.middlewares;
+      var domain = utils.domain();
+      var subdomain = utils.subdomain();
+
+      apps.disable('x-powered-by');
+      apps.use(morgan(':remote-addr :method :url :status :res[content-length] - :response-time ms'));
+      apps.use(middlewares.pond);
+      apps.use(middlewares.throttleByAPI('tiers'));
+      redirects(apps);
+      apps.use(cors({
+        exposedHeaders: ['Content-Type', 'Link']
+      }));
+      apps.use(compression());
+
+      apps.get('/status', function (req, res) {
+        res.json({
+          status: 'healthy'
+        });
       });
 
-      apps.use(function (req, res, next) {
-        res.pond(errors.notFound());
-      });
+      if (nconf.get('SERVER_TRUST_PROXY')) {
+        apps.enable('trust proxy');
+      }
 
-      var port = nconf.get('PORT');
-      server = apps.listen(port, function (err) {
+      if (nconf.get('SERVER_SSL')) {
+        apps.use(middlewares.ssl);
+      }
+
+      var host = format(subdomain, {subdomain: 'apis'}) + '.' + domain;
+      apps.use('/' + version, vhost(host, services));
+      log.info('services:registered', 'host:%s, version:%s', host, version);
+
+      loadClients(apps, domain, subdomain, function (err) {
         if (err) {
           return done(err);
         }
-        log.info('server:started', 'port:%s', port);
-        done();
+        apps.use(function (err, req, res, next) {
+          if (err.status) {
+            return res.pond(err);
+          }
+          log.error('server-error:errored', err);
+          res.pond(errors.serverError());
+        });
+
+        apps.use(function (req, res, next) {
+          res.pond(errors.notFound());
+        });
+
+        var port = nconf.get('PORT');
+        var server = apps.listen(port, function (err) {
+          if (err) {
+            return done(err);
+          }
+          log.info('server:started', 'port:%s', port);
+          done(null, server);
+        });
       });
     });
-  });
+  };
+
+  done();
 };
