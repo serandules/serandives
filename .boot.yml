@@ -11,5 +11,5 @@ phases:
     commands:
       - echo Build started on `date`
       - npm install
-      - node initialize.js
+      - node boot.js
       - echo Build completed on `date`
