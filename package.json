@@ -1,6 +1,6 @@
 {
-  "name": "server",
-  "description": "server",
+  "name": "serandives",
+  "description": "serandives",
   "version": "0.0.0",
   "start": "node server",
   "author": {
