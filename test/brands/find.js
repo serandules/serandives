@@ -1,13 +1,13 @@
-var log = require('logger')('service-vehicle-makes:test:find');
+var log = require('logger')('service-brands:test:find');
 var should = require('should');
 var request = require('request');
 var pot = require('pot');
 var errors = require('errors');
 
-describe('GET /vehicle-makes', function () {
-    it('GET /vehicle-makes', function (done) {
+describe('GET /brands', function () {
+    it('GET /brands', function (done) {
         request({
-            uri: pot.resolve('apis', '/v/vehicle-makes'),
+            uri: pot.resolve('apis', '/v/brands'),
             method: 'GET',
             json: true
         }, function (e, r, b) {
@@ -18,19 +18,19 @@ describe('GET /vehicle-makes', function () {
             should.exist(b);
             should.exist(b.length);
             b.length.should.be.above(1);
-            b.forEach(function (make) {
-                should.exist(make);
-                should.exist(make.id);
-                should.exist(make.title);
-                should.not.exist(make.__v);
+            b.forEach(function (brand) {
+                should.exist(brand);
+                should.exist(brand.id);
+                should.exist(brand.title);
+                should.not.exist(brand.__v);
             });
             done();
         });
     });
 
-    it('GET /vehicle-makes/:id', function (done) {
+    it('GET /brands/:id', function (done) {
         request({
-            uri: pot.resolve('apis', '/v/vehicle-makes'),
+            uri: pot.resolve('apis', '/v/brands'),
             method: 'GET',
             json: true
         }, function (e, r, b) {
@@ -41,11 +41,11 @@ describe('GET /vehicle-makes', function () {
             should.exist(b);
             should.exist(b.length);
             b.length.should.be.above(1);
-            var make = b[0];
-            should.exist(make.id);
-            should.exist(make.title);
+            var brand = b[0];
+            should.exist(brand.id);
+            should.exist(brand.title);
             request({
-                uri: pot.resolve('apis', '/v/vehicle-makes/' + make.id),
+                uri: pot.resolve('apis', '/v/brands/' + brand.id),
                 method: 'GET',
                 json: true
             }, function (e, r, b) {
@@ -56,8 +56,8 @@ describe('GET /vehicle-makes', function () {
                 should.exist(b);
                 should.exist(b.id);
                 should.exist(b.title);
-                b.id.should.equal(make.id)
-                b.title.should.equal(make.title)
+                b.id.should.equal(brand.id)
+                b.title.should.equal(brand.title)
                 done();
             });
         });

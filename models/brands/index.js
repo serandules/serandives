@@ -7,9 +7,16 @@ exports.service = function (done) {
       GET: [
         '^\/$',
         '^\/.*'
+      ],
+      POST: [
+        '^\/$'
       ]
     },
     find: true,
-    findOne: true
+    findOne: true,
+    createOne: true,
+    updateOne: true,
+    replaceOne: true,
+    removeOne: true
   });
 };

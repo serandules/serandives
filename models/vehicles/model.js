@@ -65,16 +65,16 @@ var schema = Schema({
         required: true,
         searchable: true
     },
-    make: {
+    brand: {
         type: Schema.Types.ObjectId,
-        ref: 'vehicle-makes',
+        ref: 'brands',
         validator: types.ref(),
         required: true,
         searchable: true
     },
     model: {
         type: Schema.Types.ObjectId,
-        ref: 'vehicle-models',
+        ref: 'models',
         validator: types.ref(),
         required: true,
         searchable: true

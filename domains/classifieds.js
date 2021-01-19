@@ -1,4 +1,4 @@
-var log = require('logger')('classifieds');
+var log = require('logger')('realestates');
 var nconf = require('nconf');
 var bodyParser = require('body-parser');
 var dust = require('dustjs-linkedin');

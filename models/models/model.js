@@ -1,4 +1,4 @@
-var log = require('logger')('model-vehicle-models');
+var log = require('logger')('model-models');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -7,6 +7,7 @@ var plugins = sera.plugins;
 var validators = sera.validators;
 var utils = sera.utils;
 
+var modelUtils = require('../../utils/models');
 
 var types = validators.types;
 
@@ -18,14 +19,18 @@ var schema = Schema({
             length: 100
         })
     },
-    make: {
+    brand: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'vehicle-makes',
-        validator: types.ref(),
+        validator: modelUtils.brand(),
         searchable: true
+    },
+    model: {
+        type: String,
+        required: true,
+        validator: modelUtils.model()
     }
-}, {collection: 'vehicle-models'});
+}, {collection: 'models'});
 
 schema.plugin(plugins());
 schema.plugin(plugins.user());
@@ -49,4 +54,4 @@ utils.ensureIndexes(schema, [
   {updatedAt: -1, _id: -1}
 ]);
 
-module.exports = mongoose.model('vehicle-models', schema);
+module.exports = mongoose.model('models', schema);

@@ -1,11 +1,11 @@
-var log = require('logger')('service-vehicle-models:test:find');
+var log = require('logger')('service-models:test:find');
 var should = require('should');
 var request = require('request');
 var pot = require('pot');
 var _ = require('lodash');
 var errors = require('errors');
 
-describe('GET /vehicle-models', function () {
+describe('GET /models', function () {
     var client;
     /*before(function (done) {
       pot.client(function (err, c) {
@@ -17,15 +17,15 @@ describe('GET /vehicle-models', function () {
       });
     });*/
 
-    var findMake = function (b) {
-        return _.find(b, function (make) {
-            return make.title === 'Other';
+    var findBrand = function (b) {
+        return _.find(b, function (brand) {
+            return brand.title === 'Other';
         });
     };
 
-    it('GET /vehicle-models', function (done) {
+    it('GET /models', function (done) {
         request({
-            uri: pot.resolve('apis', '/v/vehicle-makes'),
+            uri: pot.resolve('apis', '/v/brands'),
             method: 'GET',
             json: true
         }, function (e, r, b) {
@@ -36,15 +36,15 @@ describe('GET /vehicle-models', function () {
             should.exist(b);
             should.exist(b.length);
             b.length.should.be.above(1);
-            var make = findMake(b);
-            should.exist(make.id);
-            should.exist(make.title);
+            var brand = findBrand(b);
+            should.exist(brand.id);
+            should.exist(brand.title);
             request({
-                uri: pot.resolve('apis', '/v/vehicle-models'),
+                uri: pot.resolve('apis', '/v/models'),
                 qs: {
                     data: JSON.stringify({
                         query: {
-                            make: make.id
+                            brand: brand.id
                         }
                     })
                 },
@@ -68,9 +68,9 @@ describe('GET /vehicle-models', function () {
         });
     });
 
-    it('GET /vehicle-models/:id', function (done) {
+    it('GET /models/:id', function (done) {
         request({
-            uri: pot.resolve('apis', '/v/vehicle-makes'),
+            uri: pot.resolve('apis', '/v/brands'),
             method: 'GET',
             json: true
         }, function (e, r, b) {
@@ -81,15 +81,15 @@ describe('GET /vehicle-models', function () {
             should.exist(b);
             should.exist(b.length);
             b.length.should.be.above(1);
-            var make = findMake(b);
-            should.exist(make.id);
-            should.exist(make.title);
+            var brand = findBrand(b);
+            should.exist(brand.id);
+            should.exist(brand.title);
             request({
-                uri: pot.resolve('apis', '/v/vehicle-models'),
+                uri: pot.resolve('apis', '/v/models'),
                 qs: {
                     data: JSON.stringify({
                         query: {
-                            make: make.id
+                            brand: brand.id
                         }
                     })
                 },
@@ -105,7 +105,7 @@ describe('GET /vehicle-models', function () {
                 b.length.should.be.above(0);
                 var model = b[0];
                 request({
-                    uri: pot.resolve('apis', '/v/vehicle-models/' + model.id),
+                    uri: pot.resolve('apis', '/v/models/' + model.id),
                     method: 'GET',
                     json: true
                 }, function (e, r, b) {
@@ -116,10 +116,10 @@ describe('GET /vehicle-models', function () {
                     should.exist(b);
                     should.exist(b.id);
                     should.exist(b.title);
-                    should.exist(b.make);
+                    should.exist(b.brand);
                     b.id.should.equal(model.id);
                     b.title.should.equal(model.title);
-                    b.make.should.equal(model.make);
+                    b.brand.should.equal(model.brand);
                     should.not.exist(model.__v);
                     done();
                 });
