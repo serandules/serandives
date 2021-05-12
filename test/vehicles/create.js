@@ -95,7 +95,7 @@ describe('POST /vehicles', function () {
     type: {
       invalid: 'dummy'
     },
-    make: {
+    brand: {
       invalid: 'dummy'
     },
     model: {

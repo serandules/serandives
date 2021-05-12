@@ -6,7 +6,28 @@ var sera = require('sera');
 var validators = sera.validators;
 var types = validators.types;
 
-var models = ['vehicles', 'phones'];
+var models = [
+  'binaries',
+  'brands',
+  'clients',
+  'configs',
+  'contacts',
+  'grants',
+  'groups',
+  'otps',
+  'locations',
+  'menus',
+  'messages',
+  'models',
+  'pages',
+  'realestates',
+  'taxonomies',
+  'tiers',
+  'tokens',
+  'users',
+  'vehicles',
+  'workflows'
+];
 
 var format = function () {
   return util.format.apply(util.format, Array.prototype.slice.call(arguments));
@@ -29,17 +50,20 @@ exports.brand = function (options) {
       if (err) {
         return done(err);
       }
+      if (o.query) {
+        return done(null, value);
+      }
       sera.model('brands').findOne({_id: value}, function (err, brand) {
         if (err) {
           return done(err);
         }
         if (!brand) {
-          return done(unprocessableEntity('\'%s\' contains invalid values', field));
+          return done(unprocessableEntity('\'%s\' contains an invalid value', field));
         }
         var data = o.data;
         var model = data.model;
         if (brand.models.indexOf(model) === -1) {
-          return done(unprocessableEntity('\'%s\' contains invalid values', field));
+          return done(unprocessableEntity('\'%s\' contains an invalid value', field));
         }
         done(null, value);
       });
@@ -56,7 +80,7 @@ exports.model = function (options) {
       return done(unprocessableEntity('\'%s\' needs to be specified', field))
     }
     if (models.indexOf(value) === -1) {
-      return done(unprocessableEntity('\'%s\' contains invalid values', field));
+      return done(unprocessableEntity('\'%s\' contains an invalid value', field));
     }
     done(null, value);
   };
@@ -71,13 +95,13 @@ exports.models = function (options) {
       return done(unprocessableEntity('\'%s\' needs to be specified', field))
     }
     if (!Array.isArray(value)) {
-      return done(unprocessableEntity('\'%s\' contains invalid values', field));
+      return done(unprocessableEntity('\'%s\' contains an invalid value', field));
     }
     var i;
     var length = value.length;
     for (i = 0; i < length; i++) {
       if (models.indexOf(value[i]) === -1) {
-        return done(unprocessableEntity('\'%s\' contains invalid values', field));
+        return done(unprocessableEntity('\'%s\' contains an invalid value', field));
       }
     }
     done(null, value);

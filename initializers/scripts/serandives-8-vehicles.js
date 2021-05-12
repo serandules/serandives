@@ -1,5 +1,6 @@
 var log = require('logger')('initializers:serandives:makes');
 var async = require('async');
+var _ = require('lodash');
 
 var sera = require('sera');
 var commons = require('../commons');
@@ -9,13 +10,14 @@ var brands = require('../vehicles/brands');
 var createModels = function (o, brand, models, done) {
   var workflow = o.workflows.model;
   async.eachLimit(models, 10, function (model, modeled) {
-    var visibility = o.visibility;
+    var visibility = _.cloneDeep(o.visibility);
     visibility.brand = {
       groups: [o.public._id, o.anonymous._id]
     };
     visibility.title = {
       groups: [o.public._id, o.anonymous._id]
     };
+    model.description = 'This is the model ' + brand.title + '.';
     model.user = o.adminUser;
     model.brand = brand;
     model.model = 'vehicles';
@@ -47,12 +49,13 @@ module.exports = function (done) {
         if (oo) {
           return createModels(o, oo, brand.models, made);
         }
-        var visibility = o.visibility;
-        visibility.title = {
+        var visibility = _.cloneDeep(o.visibility);
+        visibility['*'] = {
           groups: [o.public._id, o.anonymous._id]
         };
         sera.model('brands').create({
           title: brand.title,
+          description: 'This is the brand ' + brand.title + '.',
           user: o.adminUser,
           models: ['vehicles'],
           permissions: o.permissions,

@@ -1,6 +1,7 @@
 var log = require('logger')('initializers:serandives:configs-menus');
 
 var async = require('async');
+var _ = require('lodash');
 
 var sera = require('sera');
 
@@ -81,7 +82,7 @@ module.exports = function (done) {
     if (err) {
       return done(err);
     }
-    var visibility = o.visibility;
+    var visibility = _.cloneDeep(o.visibility);
     visibility.name = {
       groups: [o.public._id, o.anonymous._id]
     };

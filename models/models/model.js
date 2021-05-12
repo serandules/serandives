@@ -19,6 +19,13 @@ var schema = Schema({
             length: 100
         })
     },
+    description: {
+        type: String,
+        required: true,
+        validator: types.string({
+            length: 5000
+        })
+    },
     brand: {
         type: Schema.Types.ObjectId,
         required: true,

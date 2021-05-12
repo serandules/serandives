@@ -121,7 +121,9 @@ schema.plugin(plugins.createdAt());
 schema.plugin(plugins.updatedAt());
 schema.plugin(plugins.modifiedAt());
 schema.plugin(plugins.tags({
-    location: Locations.tagger
+    server: {
+        location: Locations.tagger
+    }
 }));
 
 utils.ensureIndexes(schema, [

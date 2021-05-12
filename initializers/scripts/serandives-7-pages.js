@@ -1,5 +1,6 @@
-var log = require('logger')('initializers:serandives:menus');
+var log = require('logger')('initializers:serandives:pages');
 var async = require('async');
+var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
 
@@ -20,7 +21,7 @@ module.exports = function (done) {
     if (err) {
       return done(err);
     }
-    var visibility = o.visibility;
+    var visibility = _.cloneDeep(o.visibility);
     visibility.title = {
       groups: [o.public._id, o.anonymous._id]
     };

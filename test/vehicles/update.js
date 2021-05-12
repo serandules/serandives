@@ -125,7 +125,7 @@ describe('PUT /vehicles/:id', function () {
     'location',
     'contact',
     'type',
-    'make',
+    'brand',
     'model',
     'manufacturedAt',
     'fuel',

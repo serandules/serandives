@@ -364,7 +364,8 @@ describe('GET /realestates/:id', function () {
                             count: 20,
                             query: {
                               tags: [{
-                                name: 'location:locations:postal',
+                                group: 'location',
+                                name: 'postal',
                                 value: '00700'
                               }]
                             }
@@ -386,10 +387,12 @@ describe('GET /realestates/:id', function () {
                               count: 20,
                               query: {
                                 tags: [{
-                                  name: 'location:locations:postal',
+                                  group: 'location',
+                                  name: 'postal',
                                   value: '00700'
                                 }, {
-                                  name: 'location:locations:district',
+                                  group: 'location',
+                                  name: 'district',
                                   value: 'Colombo'
                                 }]
                               }

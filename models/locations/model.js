@@ -7,6 +7,8 @@ var plugins = sera.plugins;
 var validators = sera.validators;
 var utils = sera.utils;
 
+var tagger = require('./tagger');
+
 var types = validators.types;
 var requires = validators.requires;
 
@@ -112,44 +114,6 @@ utils.ensureIndexes(schema, [
     {updatedAt: 1, _id: 1}
 ]);
 
-schema.statics.tagger = {
-    validator: ['postal', 'city', 'district', 'province', 'state', 'country'],
-    value: function (field, location, done) {
-        var Locations = mongoose.model('locations');
-
-        var wrap = function (name) {
-            return field + ':locations:' + name;
-        };
-
-        Locations.findOne({_id: location}, function (err, location) {
-            if (err) {
-                return done(err);
-            }
-            var tags = [];
-            if (!location) {
-                return done(null, tags);
-            }
-            if (location.postal) {
-                tags.push({name: wrap('postal'), value: location.postal});
-            }
-            if (location.city) {
-                tags.push({name: wrap('city'), value: location.city});
-            }
-            if (location.district) {
-                tags.push({name: wrap('district'), value: location.district});
-            }
-            if (location.province) {
-                tags.push({name: wrap('province'), value: location.province});
-            }
-            if (location.state) {
-                tags.push({name: wrap('state'), value: location.state});
-            }
-            if (location.country) {
-                tags.push({name: wrap('country'), value: location.country});
-            }
-            done(null, tags);
-        });
-    }
-};
+schema.statics.tagger = tagger;
 
 module.exports = mongoose.model('locations', schema);

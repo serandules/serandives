@@ -8,7 +8,7 @@ var request = require('request');
 var sera = require('sera');
 var pot = require('pot');
 
-describe('GET /contacts', function () {
+describe('GET /contacts/:id', function () {
     var client;
     var groups;
     var userEmail = 'test@serandives.com';

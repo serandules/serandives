@@ -28,7 +28,7 @@ var confirmEmail = function (user, contact, data, done) {
     if (!otp) {
       return done(errors.forbidden());
     }
-    sera.models('contacts').update({_id: contact.id}, {
+    sera.model('contacts').update({_id: contact.id}, {
       '_.verified.email': true
     }, done);
   });
