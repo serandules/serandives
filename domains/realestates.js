@@ -1,4 +1,4 @@
-var log = require('logger')('classifieds');
+var log = require('logger')('realestates');
 var nconf = require('nconf');
 var bodyParser = require('body-parser');
 var dust = require('dustjs-linkedin');
@@ -10,7 +10,7 @@ var utils = sera.utils;
 var middlewares = sera.middlewares;
 var serandUtils = require('../utils');
 
-var domain = 'classifieds';
+var domain = 'realestates';
 var version = nconf.get('INDEX_' + domain.toUpperCase());
 var server = utils.serverUrl();
 var cdn = nconf.get('CDN_STATICS');

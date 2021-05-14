@@ -2,7 +2,7 @@ var log = require('logger')('initializers:serandives:configs-vehicles');
 var _ = require('lodash');
 
 var sera = require('sera');
-var vehicleUtils = require('../../utils/vehicles');
+var brandUtils = require('../../utils/brands');
 var commons = require('../commons');
 
 module.exports = function (done) {
@@ -10,7 +10,7 @@ module.exports = function (done) {
     if (err) {
       return done(err);
     }
-    vehicleUtils.makes(function (err, makes) {
+    brandUtils.find('vehicles', function (err, brands) {
       if (err) {
         return done(err);
       }
@@ -23,8 +23,8 @@ module.exports = function (done) {
       };
       sera.model('configs').create({
         user: o.adminUser,
-        name: 'vehicle-makes',
-        value: JSON.stringify(makes),
+        name: 'brands-vehicles',
+        value: JSON.stringify(brands),
         workflow: o.workflows.model,
         status: 'published',
         permissions: o.permissions,
@@ -34,7 +34,7 @@ module.exports = function (done) {
         if (err) {
           return done(err);
         }
-        log.info('vehicle-makes:created');
+        log.info('brands-vehicles:created');
         done();
       });
     });

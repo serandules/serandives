@@ -127,7 +127,6 @@ var verifyPhone = function (user, contact, done) {
   });
 };
 
-
 module.exports = function (route) {
   route.use(middlewares.json);
   route.use(middlewares.findOne(sera.model('contacts')));

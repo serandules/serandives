@@ -29,6 +29,7 @@ var schema = Schema({
     models: {
         type: [String],
         required: true,
+        searchable: true,
         validator: modelUtils.models()
     }
 }, {collection: 'brands'});
