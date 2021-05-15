@@ -2,7 +2,8 @@ var log = require('logger')('initializers:serandives:configs-vehicles');
 var _ = require('lodash');
 
 var sera = require('sera');
-var brandUtils = require('../../utils/brands');
+var modelUtils = require('model-utils');
+var brandUtils = modelUtils.brands;
 var commons = require('../commons');
 
 module.exports = function (done) {
