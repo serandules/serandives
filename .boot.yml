@@ -10,6 +10,6 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - npm install
+      - npm install --production
       - node boot.js
       - echo Build completed on `date`
